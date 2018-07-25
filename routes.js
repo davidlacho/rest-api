@@ -23,7 +23,7 @@ router.param("qId", (req, res, next, id) => {
 router.param("aId", (req, res, next, id) => {
   req.answer = req.question.answers.id(id);
   if (!req.answer) {
-    err = new Error("Not Found");
+    const err = new Error("Not Found");
     err.status = 404;
     return next(err);
   }
@@ -93,6 +93,21 @@ router.delete("/questions/:qId/answers/:aId", (req, res, next) => {
       res.json(question);
     });
   });
+});
+
+router.delete("/questions/:qId", (req, res, next) => {
+  req.question.remove((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.status(200);
+    res.json({
+      "success": {
+        "status": 200,
+        "message": `Question ${req.question._id} removed.`
+      }
+    });
+  })
 });
 
 router.post("/questions/:qId/answers/:aId/vote-:dir", (req, res, next) => {
